@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุ่มวงล้อ Free Fire + TrueMoney Wallet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #222;
+            color: white;
+        }
+        .login-container {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .pay-button {
+            background-color: #ff6600;
+            color: white;
+        }
+        .spin-button {
+            background-color: #ffcc00;
+            color: black;
+            display: none;
+        }
+        #wheel {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 10px solid white;
+            position: relative;
+            overflow: hidden;
+            transform: rotate(0deg);
+            transition: transform 3s ease-out;
+        }
+        .slice {
+            width: 50%;
+            height: 50%;
+            position: absolute;
+            background: red;
+            clip-path: polygon(100% 0, 50% 100%, 0 0);
+            transform-origin: 100% 100%;
+        }
+        #arrow {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ระบบล็อกอิน -->
+    <div class="login-container" id="loginBox">
+        <h2>เข้าสู่ระบบ</h2>
+        <input type="text" id="username" placeholder="ชื่อผู้ใช้">
+        <input type="password" id="password" placeholder="รหัสผ่าน">
+        <button onclick="login()">ล็อกอิน</button>
+    </div>
+
+    <div id="mainContent" style="display:none;">
+        <h1>สุ่มวงล้อ Free Fire + จ่ายผ่าน TrueMoney Wallet</h1>
+
+        <!-- ปุ่มจ่ายเงิน -->
+        <button class="pay-button" onclick="sendGift()">💰 จ่ายผ่าน TrueMoney Wallet</button>
+        <p id="paymentMessage">กรุณาชำระเงินก่อนสุ่มวงล้อ</p>
+
+        <!-- วงล้อสุ่ม -->
+        <div id="arrow">▼</div>
+        <div id="wheel">
+            <div class="slice" style="background: gold; transform: rotate(0deg);">💎 1000 เพชร</div>
+            <div class="slice" style="background: blue; transform: rotate(45deg);">🔫 ปืนถาวร</div>
+            <div class="slice" style="background: green; transform: rotate(90deg);">🧥 ชุดแฟชั่น</div>
+            <div class="slice" style="background: orange; transform: rotate(135deg);">💰 5000 ทอง</div>
+            <div class="slice" style="background: red; transform: rotate(180deg);">🔥 บัตรสุ่ม</div>
+            <div class="slice" style="background: purple; transform: rotate(225deg);">🎁 ไอเทมพิเศษ</div>
+            <div class="slice" style="background: cyan; transform: rotate(270deg);">🃏 บัตรตัวละคร</div>
+            <div class="slice" style="background: pink; transform: rotate(315deg);">🏆 รางวัลใหญ่</div>
+        </div>
+
+        <!-- ปุ่มสุ่มวงล้อ -->
+        <button class="spin-button" id="spinButton" onclick="spinWheel()" disabled>🎡 หมุนวงล้อ!</button>
+
+        <p id="result"></p>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+        let hasPaid = false;
+
+        function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            if (username && password) {
+                isLoggedIn = true;
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("mainContent").style.display = "block";
+            } else {
+                alert("กรุณากรอกชื่อผู้ใช้และรหัสผ่านให้ครบถ้วน");
+            }
+        }
+
+        function sendGift() {
+            if (!isLoggedIn) {
+                alert("กรุณาล็อกอินก่อน!");
+                return;
+            }
+
+            let phone = "099301038"; // เบอร์ทรูมันนี่วอเลท
+            let amount = prompt("กรุณากรอกจำนวนเงินที่ต้องการส่ง (บาท):", "10");
+
+            if (amount && !isNaN(amount) && amount > 0) {
+                let url = https://gift.truemoney.com/gift/send?phone=${phone}&amount=${amount};
+                window.open(url, "_blank");
+
+                hasPaid = true;
+                document.getElementById("spinButton").disabled = false;
+                document.getElementById("paymentMessage").innerText = "✅ ชำระเงินเรียบร้อยแล้ว! กดหมุนวงล้อได้เลย!";
+            }
+        }
+
+        function spinWheel() {
+            if (!hasPaid) {
+                alert("กรุณาชำระเงินก่อนสุ่ม!");
+                return;
+            }
+
+            let randomDegree = Math.floor(Math.random() * 360) + 1440; // หมุนอย่างน้อย 4 รอบ
+            document.getElementById("wheel").style.transform = rotate(${randomDegree}deg);
+
+            setTimeout(() => {
+                let resultText = getPrize(randomDegree % 360);
+                document.getElementById("result").innerText = "🎉 คุณได้รับ: " + resultText;
+            }, 3000);
+        }
+
+        function getPrize(angle) {
+            if (angle >= 0 && angle < 45) return "💎 1000 เพชร";
+            if (angle >= 45 && angle < 90) return "🔫 ปืนถาวร";
+            if (angle >= 90 && angle < 135) return "🧥 ชุดแฟชั่น";
+            if (angle >= 135 && angle < 180) return "💰 5000 ทอง";
+            if (angle >= 180 && angle < 225) return "🔥 บัตรสุ่ม";
+            if (angle >= 225 && angle < 270) return "🎁 ไอเทมพิเศษ";
+            if (angle >= 270 && angle < 315) return "🃏 บัตรตัวละคร";
+            return "🏆 รางวัลใหญ่";
+        }
+    </script>
+
+</body>
+</html>
